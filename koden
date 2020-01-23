@@ -1,0 +1,408 @@
+
+
+ 
+ 
+Import-Module ActiveDirectory -EA Stop
+ 
+sleep 5
+cls
+ 
+ 
+write-host ====Skapa konto på SF==== -ForegroundColor Cyan
+  
+Write-Host
+Write-Host
+
+$firstname = Read-Host "
+                       `nAnge förnamnet här"
+
+write-host
+
+$lastname = Read-Host "
+                       `nAnge efternamnet här"
+
+
+$fullname = "$firstname $lastname"
+
+$OU = "OU=Users,OU=SF,DC=ads,DC=bonniergroup,DC=com"
+
+$logonname = $firstname.Replace(' ','') + '.' + $lastname.Replace(' ','')
+
+
+
+
+
+sleep 3
+
+$logonname = $logonname -replace 'å','a'
+$logonname = $logonname -replace 'ä','a'
+$logonname = $logonname -replace 'ö','o'
+$logonname = $logonname -replace 'Ø','o'
+$logonname = $logonname -replace 'æ','a'
+
+clear-host
+
+sleep 3
+
+write-host
+write-host
+    $Domain = Read-Host "Välj Domän 
+                        `n
+
+                        `n1) sfanytime.com
+                        `n2) sfstudios.se
+                        `n3) sfstudios.dk
+                        `n4) sfstudio.no
+                        `n5) sfstudios.fi
+                        `n * Välj siffran för vilken domän du ska ha?" 
+
+                       
+    switch ($Domain)
+    {
+        '1' { "sfanytime.com"
+            
+            if($domain -eq '1') {
+                
+                $Domain = "sfanytime.com"
+                }
+            }
+
+               
+        '2' { "sfstudios.se"
+            
+            if($Domain -eq '2') {
+                
+                $Domain = "sfstudios.se"
+               
+                }
+            }
+        '3' { "sfstudios.dk"
+            
+            if($Domain -eq '3') {
+                
+                $Domain = "sfstudios.dk"
+               
+                }
+            }
+        '4' { "sfstudio.no"
+            
+            if($Domain -eq '4') {
+                
+                $Domain = "sfstudio.no"
+               
+                }
+            }
+        '5' { "sfstudio.fi"
+            
+            if($Domain -eq '5') {
+                
+                $Domain = "sfstudio.fi"
+               
+                }
+            }
+
+    }
+
+
+
+clear-host 
+
+
+
+
+    $Company = Read-Host "============ Välj Company ============
+                        `n
+                        `n === Sverige ===
+                        `n1) AB Svensk Filmindustri
+                        `n2) SF Studios Production AB
+                        `n3) SF Anytime AB
+                        `n
+                        `n === Danmark ===
+                        `n4) SF Film Production
+                        `n5) SF Film A/S
+                        `n
+                        `n === Norge ===  
+                        `n6) SF Norge AS
+                        `n
+                        `n === Finland ===
+                        `n7) SF Film Finland OY
+                        `n Välj Company genom att trycka på sifran och sen tryck Enter"
+ 
+                       
+    switch ($Company)
+    {
+        '1' { "AB Svensk Filmindustri"
+            
+            if($Company -eq '1') {
+                
+                $Company = "AB Svensk Filmindustri"
+                }
+            }
+
+               
+        '2' { "SF Studios Production AB"
+            
+            if($Company -eq '2') {
+                
+                $company = "SF Studios Production AB"
+               
+                }
+            }
+        '3' { "SF Anytime AB"
+            
+            if($Company -eq '3') {
+                
+                $company = "SF Anytime AB"
+               
+                }
+            }
+        '4' { "SF Film Production"
+            
+            if($Company -eq '4') {
+                
+                $company = "SF Film Production"
+               
+                }
+            }
+        '5' { "SF Film A/S"
+            
+            if($Company -eq '5') {
+                
+                $company = "SF Film A/S"
+               
+                }
+            }
+        '6' { "SF Norge AS"
+            
+            if($Company -eq '6') {
+                
+                $company = "SF Norge AS"
+               
+                }
+            }
+            
+        '7' { "SF Film Finland OY"
+            
+            if($Company -eq '7') {
+                
+                $company = 'SF Film Finland OY'
+               
+                }
+            }
+    }
+
+
+
+   
+
+clear-host 
+
+sleep 2
+
+write-host
+write-host
+write-host
+
+
+$Title = Read-Host "Vad har användaren för Title(Arbetsroll) 
+                   `n
+                   `n Skriv användarens title här"
+
+Sleep 2
+
+clear-host
+
+
+write-host
+write-host
+write-host
+write-host "OBS. Det ska vara User logon name(Pre Windows 2000)" -ForegroundColor Yellow
+$Manager = Read-host "Vem är användarens Chef?
+                      `n
+                      `n Skriv chefens användarnamn här"
+
+
+write-host
+write-host
+
+
+$Department = read-host "Vilken avdelning ska användaren jobba?) 
+                   `n
+                   `n Skriv användarens avdelning här"
+
+ 
+cls
+
+Write-Host "======================================="
+Write-Host
+Write-Host "Firstname:      $firstname"
+Write-Host "Lastname:       $lastname"
+Write-Host "Display name:   $fullname"
+Write-Host "Logon name:     $logonname"
+Write-Host "OU:             $OU"
+Write-Host "Domain:         $domain"
+Write-Host "E-mail:         $logonname + '@' + $domain"
+Write-Host "Company:        $company"
+Write-Host "Chef:           $manager"
+Write-Host "Title:          $title"
+
+
+
+
+DO
+{
+If ($(Get-ADUser -Filter {SamAccountName -eq $logonname})) {
+        Write-Host "WARNING: Logon name" $logonname.toUpper() "already exists!!" -ForegroundColor:Green
+        $logonname = $firstname + '.' + $lastname
+        Write-Host
+        Write-Host
+        Write-Host "Changing Logon name to" $logonname.toUpper() -ForegroundColor:Green
+        Write-Host
+        $taken = $true
+        sleep 10
+    } else {
+    $taken = $false
+    }
+} Until ($taken -eq $false)
+$logonname = $logonname.toLower()
+ 
+cls
+
+Write-Host "======================================="
+Write-Host "Kontot kommer att skapas med uppgifterna nedan. Om nånting har blivit fel stäng bara av programmet och börja om från början" -ForegroundColor Yellow
+Write-Host
+Write-Host "Firstname:      $firstname"
+Write-Host "Lastname:       $lastname"
+Write-Host "Display name:   $fullname"
+Write-Host "Logon name:     $logonname"
+Write-Host "OU:             $OU"
+Write-Host "Domain:         $domain"
+Write-Host "E-mail:         $logonname + '@' + $domain"
+Write-Host "Company:        $company"
+Write-Host "Chef:           $manager"
+Write-Host "Title:          $title"
+ 
+ 
+
+$PasswordLength = 8
+
+write-host
+Write-host "Password policy: Minst 8 tecken inkluderat 1 special tecken" -ForegroundColor Yellow
+Do
+{
+Write-Host
+    $isGood = 0
+    $Password = Read-Host "Ange lösenordet" -AsSecureString
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+    $Complexity = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+ 
+    if ($Complexity.Length -ge $PasswordLength) {
+                Write-Host
+            } else {
+                Write-Host "Lösenordet behöver $PasswordLength eller mer tecken" -ForegroundColor:Green
+        }
+ 
+    if ($Complexity -match "[^a-zA-Z0-9]") {
+                $isGood++
+            } else {
+                Write-Host "Lösenordet innehåller inga specialtecken" -ForegroundColor:Green
+        }
+ 
+    if ($Complexity -match "[0-9]") {
+                $isGood++
+            } else {
+                Write-Host "Lösenordet innehåller inga siffror" -ForegroundColor:Green
+        }
+ 
+    if ($Complexity -cmatch "[a-z]") {
+                $isGood++
+            } else {
+                Write-Host "Lösenordet innehåller inga gemener" -ForegroundColor:Green
+        }
+ 
+    if ($Complexity -cmatch "[A-Z]") {
+                $isGood++
+            } else {
+                Write-Host "Lösenordet innehåller inga versaler" -ForegroundColor:Green
+        }
+ 
+} Until ($password.Length -ge $PasswordLength -and $isGood -ge 10)
+ 
+ 
+Write-Host
+Read-Host "Tryck Enter för att fortsätta skapa kontot"
+Write-Host "Skapar kontot nu, vänligen vänta!" -ForegroundColor:Green
+ 
+
+New-ADUser -Name $fullname -GivenName $firstname -Surname $lastname -DisplayName $fullname -SamAccountName $logonname -UserPrincipalName $logonname@$Domain -AccountPassword $password -Enabled $true -Path $OU -Description $Description -Confirm:$false
+ 
+sleep 2
+
+set-aduser $logonname -add @{“targetaddress” = “SMTP:” + $logonname + “@svenskfilmindustri.onmicrosoft.com”}
+
+Sleep 3
+
+set-aduser $logonname -add @{“proxyaddresses” = “smtp:” + $logonname + “@svenskfilmindustri.onmicrosoft.com”}
+
+Sleep 4
+
+set-aduser $logonname -add @{“proxyaddresses” = “SMTP:” + $logonname + '@' + $domain}
+
+sleep 4
+
+set-aduser $logonname -add @{“proxyaddresses” = “SIP:” + $logonname + '@' + $domain}
+
+
+
+set-aduser -identity $logonname -add @{“mail” = $logonname + '@' + $domain} 
+
+set-ADUser -Identity $logonname -company $Company
+
+set-aduser -identity $logonname -manager $Manager
+
+set-aduser -identity $logonname -department $Department
+
+
+set-aduser -identity $logonname -title $title
+
+ 
+
+
+Write-Host
+ 
+$ADProperties = Get-ADUser $logonname -Properties *
+ 
+
+
+
+write-host
+write-host "OBS. Det ska vara User logon name(Pre Windows 2000)" -ForegroundColor Yellow
+
+$copy = Read-host "Skriv Användarnamnet på den personen du vill kopiera behörigheterna ifrån"
+
+
+$paste  = $logonname
+
+get-ADuser -identity $copy -properties memberof | select-object memberof -expandproperty memberof | Add-AdGroupMember -Members $paste
+
+
+
+Start-ADSyncSyncCycle -PolicyType delta
+
+ 
+write-Host "========================================================"
+write-Host "Kontot är nu skapad med följande uppgifter:"
+write-Host
+write-Host "Förnamn:      $firstname"
+write-Host "Efternamn:       $lastname"
+write-Host "Display name:   $fullname"
+write-Host "Användarnamn:     $logonname"
+write-Host "OU:             $OU"
+write-Host "Domain:         $domain"
+write-Host "Company:       $company"
+write-Host "Chef:          $manager"
+write-host "Avdelning:     $department"
+
+
+
+
